@@ -1599,6 +1599,9 @@ public class input {
 	             return column;
 
 	       }
+
+	           
+	           
 	           
 		        /**
 		         * 
@@ -1627,7 +1630,12 @@ public class input {
 		                    while ((line = br.readLine()) != null  ) {
 		                    	//measure line length
 		                    	line=line.replace("\n", "");
+		                    	if (line.contains("#")){
+		                    		String splits [] =line.split("#");
+		                    		line=splits[0];
+		                    	}
 		                    	int line_length=line.length();
+		                    	
 		                    	// if size is big enough to be considered an 'algorithm'
 		                    	if (line_length > 9){
 		                    		boolean model_OK=check_model_status(line);
@@ -1709,6 +1717,10 @@ public class input {
 						is_valid=true;
 					}else if (str_estimator.contains("LSVC")) {
 						is_valid=true;
+					}else if (str_estimator.contains("OriginalLibFMClassifier")) {
+						is_valid=true;						
+					}else if (str_estimator.contains("OriginalLibFMRegressor")) {
+						is_valid=true;							
 					}else if (str_estimator.contains("LogisticRegression")) {
 						is_valid=true;
 					}else if (str_estimator.contains("LinearRegression")) {
@@ -1750,8 +1762,60 @@ public class input {
 					}else if (str_estimator.contains("H2OGlmRegressor")) {
 						is_valid=true;
 					}else if (str_estimator.contains("H2ONaiveBayesClassifier")) {
+						is_valid=true;					
+					}else if (str_estimator.contains("SklearnAdaBoostClassifier")) {
 						is_valid=true;
+					}else if (str_estimator.contains("SklearnAdaBoostRegressor")) {
+						is_valid=true;
+					}else if (str_estimator.contains("SklearnDecisionTreeClassifier")) {
+						is_valid=true;
+					}else if (str_estimator.contains("SklearnDecisionTreeRegressor")) {
+						is_valid=true;
+					}else if (str_estimator.contains("SklearnExtraTreesClassifier")) {
+						is_valid=true;
+					}else if (str_estimator.contains("SklearnExtraTreesRegressor")) {
+						is_valid=true;
+					}else if (str_estimator.contains("SklearnknnClassifier")) {
+						is_valid=true;
+					}else if (str_estimator.contains("SklearnknnRegressor")) {
+						is_valid=true;
+					}else if (str_estimator.contains("SklearnMLPClassifier")) {
+						is_valid=true;
+					}else if (str_estimator.contains("SklearnMLPRegressor")) {
+						is_valid=true;
+					}else if (str_estimator.contains("SklearnRandomForestClassifier")) {
+						is_valid=true;
+					}else if (str_estimator.contains("SklearnRandomForestRegressor")) {
+						is_valid=true;
+					}else if (str_estimator.contains("SklearnSGDClassifier")) {
+						is_valid=true;
+					}else if (str_estimator.contains("SklearnSGDRegressor")) {
+						is_valid=true;
+					}else if (str_estimator.contains("SklearnsvmClassifier")) {
+						is_valid=true;
+					}else if (str_estimator.contains("SklearnsvmRegressor")) {
+						is_valid=true;
+					}else if (str_estimator.contains("KerasnnRegressor")) {
+						is_valid=true;
+					}else if (str_estimator.contains("KerasnnClassifier")) {
+						is_valid=true;
+					}else if (str_estimator.contains("PythonGenericClassifier")) {
+						is_valid=true;
+					}else if (str_estimator.contains("PythonGenericRegressor")) {
+						is_valid=true;
+					}else if (str_estimator.contains("FRGFClassifier")) {
+						is_valid=true;
+					}else if (str_estimator.contains("FRGFRegressor")) {
+						is_valid=true;					
+					}else if (str_estimator.contains("libffmClassifier")) {
+						is_valid=true;						
+					}else if (str_estimator.contains("VowpaLWabbitClassifier")) {
+						is_valid=true;							
+					}else if (str_estimator.contains("VowpaLWabbitRegressor")) {
+						is_valid=true;	
 					}
+						
+						
 					
 					return is_valid;
 	        }

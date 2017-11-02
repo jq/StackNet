@@ -37,22 +37,36 @@ import ml.estimator;
 import ml.Kernel.copy.KernelmodelClassifier;
 import ml.LSVC.LSVC;
 import ml.LibFm.LibFmClassifier;
+import ml.LibFm.OriginalLibFMClassifier;
 import ml.LogisticRegression.LogisticRegression;
 import ml.NaiveBayes.NaiveBayesClassifier;
 import ml.Tree.AdaboostRandomForestClassifier;
 import ml.Tree.DecisionTreeClassifier;
 import ml.Tree.GradientBoostingForestClassifier;
 import ml.Tree.RandomForestClassifier;
+import ml.fastrgf.FRGFClassifier;
 import ml.h2o.H2ODeepLearningClassifier;
 import ml.h2o.H2ODrfClassifier;
 import ml.h2o.H2OGbmClassifier;
 import ml.h2o.H2OGlmClassifier;
 import ml.h2o.H2ONaiveBayesClassifier;
 import ml.knn.knnClassifier;
+import ml.libffm.libffmClassifier;
 import ml.lightgbm.LightgbmClassifier;
 import ml.nn.Vanilla2hnnclassifier;
 import ml.nn.softmaxnnclassifier;
+import ml.python.PythonGenericClassifier;
+import ml.python.keras.KerasnnClassifier;
+import ml.python.sklearn.SklearnAdaBoostClassifier;
+import ml.python.sklearn.SklearnDecisionTreeClassifier;
+import ml.python.sklearn.SklearnExtraTreesClassifier;
+import ml.python.sklearn.SklearnMLPClassifier;
+import ml.python.sklearn.SklearnRandomForestClassifier;
+import ml.python.sklearn.SklearnSGDClassifier;
+import ml.python.sklearn.SklearnknnClassifier;
+import ml.python.sklearn.SklearnsvmClassifier;
 import ml.stacknet.StackNetClassifier;
+import ml.vowpalwabbit.VowpaLWabbitClassifier;
 import ml.xgboost.XgboostClassifier;
 
 /**
@@ -1250,6 +1264,18 @@ public class BaggingClassifier implements estimator,classifier {
 			classifier model =null;
 			if (model_parameters.contains("AdaboostRandomForestClassifier")) {
 				model= new AdaboostRandomForestClassifier(fsdataset);
+			}else if (model_parameters.contains("SklearnAdaBoostClassifier")) {
+				model= new SklearnAdaBoostClassifier(fsdataset);
+			}else if (model_parameters.contains("SklearnDecisionTreeClassifier")) {
+				model= new SklearnDecisionTreeClassifier(fsdataset);
+			}else if (model_parameters.contains("SklearnExtraTreesClassifier")) {
+				model= new SklearnExtraTreesClassifier(fsdataset);
+			}else if (model_parameters.contains("SklearnknnClassifier")) {
+				model= new SklearnknnClassifier(fsdataset);							
+			}else if (model_parameters.contains("SklearnMLPClassifier")) {
+				model= new SklearnMLPClassifier(fsdataset);	
+			}else if (model_parameters.contains("SklearnRandomForestClassifier")) {
+				model= new SklearnRandomForestClassifier(fsdataset);					
 			}else if (model_parameters.contains("DecisionTreeClassifier")) {
 				model= new DecisionTreeClassifier(fsdataset);
 			}else if (model_parameters.contains("GradientBoostingForestClassifier")) {
@@ -1262,6 +1288,8 @@ public class BaggingClassifier implements estimator,classifier {
 				model= new softmaxnnclassifier(fsdataset);
 			}else if (model_parameters.contains("NaiveBayesClassifier")) {
 				model= new NaiveBayesClassifier(fsdataset);
+			}else if (model_parameters.contains("OriginalLibFMClassifier")) {
+				model= new OriginalLibFMClassifier(fsdataset);				
 			}else if (model_parameters.contains("LSVC")) {
 				model= new LSVC(fsdataset);
 			}else if (model_parameters.contains("LogisticRegression")) {
@@ -1285,7 +1313,31 @@ public class BaggingClassifier implements estimator,classifier {
 			}else if (model_parameters.contains("H2OGlmClassifier")) {
 				model= new H2OGlmClassifier(fsdataset);					
 			}else if (model_parameters.contains("H2ONaiveBayesClassifier")) {
-				model= new H2ONaiveBayesClassifier(fsdataset);					
+				model= new H2ONaiveBayesClassifier(fsdataset);	
+			}else if (model_parameters.contains("FRGFClassifier")) {
+				model= new FRGFClassifier(fsdataset);	
+						
+			}else if (model_parameters.contains("SklearnSGDClassifier")) {
+				model= new SklearnSGDClassifier(fsdataset);								
+			}else if (model_parameters.contains("SklearnsvmClassifier")) {
+				model= new SklearnsvmClassifier(fsdataset);
+			}else if (model_parameters.contains("KerasnnClassifier")) {
+				model= new KerasnnClassifier(fsdataset);			
+			}else if (model_parameters.contains("PythonGenericClassifier")) {
+				model= new PythonGenericClassifier(fsdataset);					
+			}else if (model_parameters.contains("VowpaLWabbitClassifier")) {
+				model= new VowpaLWabbitClassifier(fsdataset);					
+			}else if (model_parameters.contains("libffmClassifier")) {
+				model= new libffmClassifier(fsdataset);	
+				
+				
+				
+					
+				
+				
+				
+				
+				
 			} else {
 				throw new IllegalStateException(" The selected model '" + model_parameters + " is not recognizable as valid classifier" );
 			}
@@ -1443,6 +1495,18 @@ public class BaggingClassifier implements estimator,classifier {
 			classifier model =null;
 			if (model_parameters.contains("AdaboostRandomForestClassifier")) {
 				model= new AdaboostRandomForestClassifier(fsdataset);
+			}else if (model_parameters.contains("SklearnAdaBoostClassifier")) {
+				model= new SklearnAdaBoostClassifier(fsdataset);
+			}else if (model_parameters.contains("SklearnDecisionTreeClassifier")) {
+				model= new SklearnDecisionTreeClassifier(fsdataset);
+			}else if (model_parameters.contains("SklearnExtraTreesClassifier")) {
+				model= new SklearnExtraTreesClassifier(fsdataset);
+			}else if (model_parameters.contains("SklearnknnClassifier")) {
+				model= new SklearnknnClassifier(fsdataset);							
+			}else if (model_parameters.contains("SklearnMLPClassifier")) {
+				model= new SklearnMLPClassifier(fsdataset);	
+			}else if (model_parameters.contains("SklearnRandomForestClassifier")) {
+				model= new SklearnRandomForestClassifier(fsdataset);					
 			}else if (model_parameters.contains("DecisionTreeClassifier")) {
 				model= new DecisionTreeClassifier(fsdataset);
 			}else if (model_parameters.contains("GradientBoostingForestClassifier")) {
@@ -1455,6 +1519,8 @@ public class BaggingClassifier implements estimator,classifier {
 				model= new softmaxnnclassifier(fsdataset);
 			}else if (model_parameters.contains("NaiveBayesClassifier")) {
 				model= new NaiveBayesClassifier(fsdataset);
+			}else if (model_parameters.contains("OriginalLibFMClassifier")) {
+				model= new OriginalLibFMClassifier(fsdataset);				
 			}else if (model_parameters.contains("LSVC")) {
 				model= new LSVC(fsdataset);
 			}else if (model_parameters.contains("LogisticRegression")) {
@@ -1478,7 +1544,22 @@ public class BaggingClassifier implements estimator,classifier {
 			}else if (model_parameters.contains("H2OGlmClassifier")) {
 				model= new H2OGlmClassifier(fsdataset);					
 			}else if (model_parameters.contains("H2ONaiveBayesClassifier")) {
-				model= new H2ONaiveBayesClassifier(fsdataset);					
+				model= new H2ONaiveBayesClassifier(fsdataset);	
+			}else if (model_parameters.contains("FRGFClassifier")) {
+				model= new FRGFClassifier(fsdataset);					
+			}else if (model_parameters.contains("SklearnSGDClassifier")) {
+				model= new SklearnSGDClassifier(fsdataset);								
+			}else if (model_parameters.contains("SklearnsvmClassifier")) {
+				model= new SklearnsvmClassifier(fsdataset);
+			}else if (model_parameters.contains("KerasnnClassifier")) {
+				model= new KerasnnClassifier(fsdataset);			
+			}else if (model_parameters.contains("PythonGenericClassifier")) {
+				model= new PythonGenericClassifier(fsdataset);					
+			}else if (model_parameters.contains("VowpaLWabbitClassifier")) {
+				model= new VowpaLWabbitClassifier(fsdataset);					
+			}else if (model_parameters.contains("libffmClassifier")) {
+				model= new libffmClassifier(fsdataset);				
+				
 			} else {
 				throw new IllegalStateException(" The selected model '" + model_parameters + " is not recognizable as valid classifier" );
 			}
@@ -1636,6 +1717,18 @@ public class BaggingClassifier implements estimator,classifier {
 			classifier model =null;
 			if (model_parameters.contains("AdaboostRandomForestClassifier")) {
 				model= new AdaboostRandomForestClassifier(sdataset);
+			}else if (model_parameters.contains("SklearnAdaBoostClassifier")) {
+				model= new SklearnAdaBoostClassifier(sdataset);
+			}else if (model_parameters.contains("SklearnDecisionTreeClassifier")) {
+				model= new SklearnDecisionTreeClassifier(sdataset);
+			}else if (model_parameters.contains("SklearnExtraTreesClassifier")) {
+				model= new SklearnExtraTreesClassifier(sdataset);
+			}else if (model_parameters.contains("SklearnknnClassifier")) {
+				model= new SklearnknnClassifier(sdataset);							
+			}else if (model_parameters.contains("SklearnMLPClassifier")) {
+				model= new SklearnMLPClassifier(sdataset);	
+			}else if (model_parameters.contains("SklearnRandomForestClassifier")) {
+				model= new SklearnRandomForestClassifier(sdataset);						
 			}else if (model_parameters.contains("DecisionTreeClassifier")) {
 				model= new DecisionTreeClassifier(sdataset);
 			}else if (model_parameters.contains("GradientBoostingForestClassifier")) {
@@ -1648,6 +1741,8 @@ public class BaggingClassifier implements estimator,classifier {
 				model= new softmaxnnclassifier(sdataset);
 			}else if (model_parameters.contains("NaiveBayesClassifier")) {
 				model= new NaiveBayesClassifier(sdataset);
+			}else if (model_parameters.contains("OriginalLibFMClassifier")) {
+				model= new OriginalLibFMClassifier(sdataset);				
 			}else if (model_parameters.contains("LSVC")) {
 				model= new LSVC(sdataset);
 			}else if (model_parameters.contains("LogisticRegression")) {
@@ -1671,7 +1766,23 @@ public class BaggingClassifier implements estimator,classifier {
 			}else if (model_parameters.contains("H2OGlmClassifier")) {
 				model= new H2OGlmClassifier(sdataset);					
 			}else if (model_parameters.contains("H2ONaiveBayesClassifier")) {
-				model= new H2ONaiveBayesClassifier(sdataset);					
+				model= new H2ONaiveBayesClassifier(sdataset);	
+			}else if (model_parameters.contains("FRGFClassifier")) {
+				model= new FRGFClassifier(sdataset);	
+					
+			}else if (model_parameters.contains("SklearnSGDClassifier")) {
+				model= new SklearnSGDClassifier(sdataset);								
+			}else if (model_parameters.contains("SklearnsvmClassifier")) {
+				model= new SklearnsvmClassifier(sdataset);
+			}else if (model_parameters.contains("KerasnnClassifier")) {
+				model= new KerasnnClassifier(sdataset);			
+			}else if (model_parameters.contains("PythonGenericClassifier")) {
+				model= new PythonGenericClassifier(sdataset);					
+			}else if (model_parameters.contains("VowpaLWabbitClassifier")) {
+				model= new VowpaLWabbitClassifier(sdataset);				
+			}else if (model_parameters.contains("libffmClassifier")) {
+				model= new libffmClassifier(sdataset);				
+				
 			} else {
 				throw new IllegalStateException(" The selected model '" + model_parameters + " is not recognizable as valid classifier" );
 			}
@@ -1765,6 +1876,7 @@ public class BaggingClassifier implements estimator,classifier {
 		if (data==null || data.length<=0){
 			throw new IllegalStateException(" There is nothing to train on" );
 		}
+
 		this.target=data;
 	}
 	@Override

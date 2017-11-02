@@ -21,6 +21,7 @@ SOFTWARE.
 
 package ml.stacknet;
 import io.input;
+import io.readcsv;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -49,48 +50,38 @@ import exceptions.LessThanMinimum;
  * 
  * @author Marios Michailidis
  * 
+ * (equations removed because due to formating problems)
+ * 
  * <H2> INTRODUCTION TO STACKNET </H2>
  * 
  * <p>implements STACKNET for regression given any number of input classifiers and/or regressors.
  * STACKNET uses stacked generalization into a feedforward neural network architecture to ensemble multiple models in Regression problems.
  * <H2> THE LOGIC </H2>
- *<p>Given some input data , a neural network normally applies a perceptron along with a transformation function like relu or sigmoid, tanh or others. The equation is often expressed as
- *<p> f<sub>1</sub> (x<sub>i</sub> )=∑<sup>H</sup><sub>(h=1)</sub>( g<sub>1</sub> ((x<sub>i</sub> ) ̂)beta<sub>1h</sub>+bias<sub>1h</sub>) </p>
- *<p> The STACKNET model assumes that this function can take the form of any supervised machine learning algorithm - or in other words:
- *<p> f<sub>1</sub> (x<sub>i</sub>)=∑<sup>H</sup><sub>(h=1)</sub>( g<sub>1</sub> s<sub>h</sub> ((x<sub>i</sub> )̂ )) 
- * <p> where s expresses this machine learning model and g is a linear function.
- * <p> Logically the outputs of each neuron , can be fed onto next layers. For instance in teh second layer the equation will be :
- * <p> f<sub>2</sub> (x<sub>i</sub>)=∑<sup>H2</sup><sub>(h2=1)</sub>( (f<sub>1</sub> ((x<sub>i</sub> )̂))a<sub>h2</sub>)
- * <p> Where m is one of the H2 algorithms included in the second layer and can be any estimator, classifier or regressor</p>
- * <P> If a classifier is selected, the target continouous variable is binned based on a <em>bin</em> value which is a hyper parameter. In that case the output is teh probability to belong in each one of the bins<p>
- * <p> The aforementioned formula could be generalised as follows for any layer:
- * <p> f<sub>n</sub> (x<sub>i</sub>)=∑<sup>H</sup><sub>(h=1)</sub>( (f<sub>(n-1)</sub> ((x<sub>i</sub>)̂ )) a<sub>h</sub>)
- * <p> Where a is the jth algorithm out of Hn in the nth hidden model layer and f_(n-1) the previous model’s raw score prediction in respect to the target variable.
- * <p> To create an output prediction score for any number of unique categories of the response variable, all selected algorithms in the last layer need to have output’s dimensionality equal one (1)
- * In case where there are many such regressors, the result is the  average of all these output predictions and can be written as:
- * <p> f<sub>n</sub> (x<sub>i</sub>)=1/R ∑<sup>R</sup><sub>(c=1)</sub>∑<sup>H</sup><sub>(h=1)</sub>( (f<sub>(n-1)</sub> ((x<sub>i</sub>)̂ )) a<sub>h</sub>)
- * <p> Where R is the number of unique regressors in the last layer. In case of just 1 classifier in the output layer this would resemble the linear activation function of a typical neural network used for regression. 
+ *<p>Given some input data , a neural network normally applies a perceptron along with a transformation function like relu or sigmoid, tanh or others.
+ *<p> The STACKNET model assumes that this function can take the form of any supervised machine learning algorithm 
+ * <p> Logically the outputs of each neuron , can be fed onto next layers. 
+ * <P> If a classifier is selected, the target continouous variable is binned based on a <em>bin</em> value which is a hyper parameter. In that case the output is the probability to belong in each one of the bins<p>
+ * <p> To create an output prediction score for any number of unique categories of the response variable, all selected algorithms in the last layer need to have output dimensionality equal one (1)
+ * In case where there are many such regressors, the result is the average of all these output predictions 
  * <H2> THE MODES </H2>
  * <p>The <em>stacking</em> element of the StackNet model could be run with 2 different modes. The first mode (e.g. the default) is the one already mentioned and assumes that in each layer uses the predictions (or output scores) of the direct previous one similar with a typical feedforward neural network or equivalently:
  * <p><b> Normal stacking mode</b> 
- * <p>f<sub>n</sub> (x<sub>i</sub>)=∑<sup>H</sup><sub>(h=1)</sub>(f<sub>(n-1)</sub> ((x<sub>i</sub> )̂ )) a<sub>h</sub>
- * <p>The second mode (also called restacking) assumes that each layer uses previous neurons activations as well as all previous layers’ neurons (including the input layer). Therefore the previous formula can be re-written as:
+ * <p>The second mode (also called restacking) assumes that each layer uses previous neurons activations as well as all previous layers neurons (including the input layer).
  * <p><b> Restacking mode</b> 
- * <p> f<sub>n</sub> (x<sub>i</sub>)=∑<sup>H</sup><sub>(h=1)</sub>∑<sub>(k=1)</sub><sup>(K=n-1)</sup>(f<sub>k</sub> ((x<sub>i</sub>)̂ )) a<sub>k</sub>
  * <p> Assuming the algorithm is located in layer n>1, to activate each neuron h in that layer, all outputs from all neurons from the previous n-1
  *  (or k) layers need to be accumulated (or stacked .The intuition behind this mode is drive from the fact that the higher level algorithm have extracted information from the input data, but rescanning the input space may yield new information not obvious from the first passes. This is also driven from the forward training methodology discussed below and assumes that convergence needs to happen within one model iteration
  * <H2> K-FOLD TRAINING</H2>
  * <p>The typical neural networks are most commonly trained with a form of back propagation, however stacked generalization requites a forward training methodology that splits the data into two parts – one of which is used for training and the other for predictions. The reason this split is necessary is to avoid the over fitting that could be a factor of the kind of algorithms being used as inputs as well as the absolute count of them.
  * <p> However splitting the data in just 2 parts would mean that in each new layer the second part needs to be further dichotomized increasing the bias of overfitting even more as each algorithm will have to be trained and validated on increasingly less data. 
 To overcome this drawback the algorithm utilises a k-fold cross validation (where k is a hyper parameter) so that all the original training data is scored in different k batches thereby outputting n shape training predictions where n is the size of the samples in the training data. Therefore the training process is consisted of 2 parts:
-<p> 1.0fSplit the data k times and run k models to output predictions for each k part and then bring the k parts back together to the original order so that the output predictions can be used in later stages of the model. This process is illustrated below : 
+<p> 1. Split the data k times and run k models to output predictions for each k part and then bring the k parts back together to the original order so that the output predictions can be used in later stages of the model. This process is illustrated below : 
 <p> 2. Rerun the algorithm on the whole training data to be used later on for scoring the external test data. There is no reason to limit the ability of the model to learn using 100% of the training data since the output scoring is already unbiased (given that it is always scored as a holdout set).
-<p> It should be noted that (1) is only applied during training to create unbiased predictions for the second layers’s model to fit one. During scoring time (and after model training is complete) only (2) is in effect.
-<p>. All models must be run sequentially based on the layers, but the order of the models within the layer does not matter. In other words all models of layer one need to be trained in order to proceed to layer two but all models within the layer can be run asynchronously and in parallel to save time.  
+<p> It should be noted that (1) is only applied during training to create unbiased predictions for the second layers model to fit one. During scoring time (and after model training is complete) only (2) is in effect.
+<p> All models must be run sequentially based on the layers, but the order of the models within the layer does not matter. In other words all models of layer one need to be trained in order to proceed to layer two but all models within the layer can be run asynchronously and in parallel to save time.  
  The k-fold may also be viewed as a form of regularization where smaller number of folds (but higher than 1) ensure that the validation data is big enough to demonstrate how well a single model could generalize. On the other hand higher k means that the models come closer to running with 100% of the training and may yield more unexplained information. The best values could be found through cross validation. 
 Another possible way to implement this could be to save all the k models and use the average of their predicting to score the unobserved test data, but this have all the models never trained with 100% of the training data and may be suboptimal. 
  * <H3> Final Notes</H3>
- * <p> STACKNET is commonly a better than the best single model it contains, however its ability to perform well still relies on a mix of string and diverse single models in order to get  the best out of this meta-modelling methodology.
+ * <p> STACKNET is commonly a better than the best single model it contains, however its ability to perform well still relies on a mix of strong and diverse single models in order to get the best out of this meta-modelling methodology.
  * <p> <b>Warning</b> : Regression can fail greatly when there are strong temporal elements in the data - Like in stock market or sales or other generic time series problems<p> 
  * 
  */
@@ -125,6 +116,14 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 	 * Suffix for output files
 	 */
 	public String output_name="stacknet";
+	/**
+	 * name of file to load in order to form the train and test indices. This overrides the internal process for generating K-folds and ignores the given folds. 
+	 */
+	public String input_index="";	
+	/**
+	 * True to enable printing the target column in the left of the output file for train holdout predictions (when output_name is not empty). 
+	 */
+	public boolean include_target=false;
 	/**
 	 * prefix to be used when the user supplies own pairs of [X_train,X_cv] datasets for each fold  as well as a pair of whole [X,X_test] files. Each train/valid pair is identified by prefix_'train'[fold_index_starting_from_zero]'.txt'/prefix_'cv'[fold_index_starting_from_zero]'.txt' and prefix_'train.txt'/prefix_'test.txt' for the final sets. 
 	 */
@@ -485,7 +484,8 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 			
 			String [] level_grid=parameters[level];
 			estimator[] mini_batch_tree= new estimator[level_grid.length];
-			
+			double metric_averages[]=new double [level_grid.length]; //holds stats for the level
+			int model_count=0;
 			Thread[] thread_array= new Thread[(this.threads>level_grid.length)?level_grid.length: this.threads];
 			estimator [] estimators= new estimator[(this.threads>level_grid.length)?level_grid.length: this.threads];
 			int count_of_live_threads=0;
@@ -640,18 +640,22 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 										
 											double rms=rmse(predictions,y_cv);
 											System.out.println(" rmse : " + rms);
+											metric_averages[model_count]+=rms;
 										} else if (this.metric.equals("mae")){
 											
 												double mae=mae(predictions,y_cv);
 												System.out.println(" mae : " + mae);
+												metric_averages[model_count]+=mae;
 										} else if (this.metric.equals("rsquared")){
 											
 											double rsq=rsquared(predictions,y_cv);
-											System.out.println(" rsquared : " + rsq);										
+											System.out.println(" rsquared : " + rsq);
+											metric_averages[model_count]+=rsq;
 										}
 									} else {
 										double log=logloss (predictions,binner.transform(y_cv) ); // the logloss for the current fold	
 										System.out.println(" logloss : " + log);
+										metric_averages[model_count]+=log;
 										
 									}
 						
@@ -666,7 +670,7 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 								}
 								
 							
-								
+								model_count+=1;		
 							}							
 							
 							System.gc();
@@ -682,7 +686,7 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 						System.out.println("Done with fold: " + (f+1) + "/" + this.folds);
 						
 					}
-				
+					model_count=0;
 			}
 			if (this.print){
 				
@@ -690,7 +694,11 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 					
 					System.out.println("Printing reusable train for level: " + (level+1) + " as : " + this.output_name +  (level+1)+ ".csv" );
 				}
-				trainstacker.ToFile(this.output_name +  (level+1)+ ".csv");
+				if (include_target){
+					trainstacker.ToFileTarget(this.output_name +  (level+1)+ ".csv",temp_target);
+				}else {
+					trainstacker.ToFile(this.output_name +  (level+1)+ ".csv");
+				}
 				
 			}
 
@@ -698,6 +706,11 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 
 			
 			if (this.verbose){
+				
+				for (int jj=0; jj< metric_averages.length;jj++ ){
+					System.out.println(" Average of all folds model " +jj + " : "  + metric_averages[jj]/this.folds);
+				}
+				
 				System.out.println(" Level: " +  (level+1)+ " start output modelling ");
 			}
 			
@@ -944,10 +957,10 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 				
 				
 			}
-			
+			int model_count=0;
 			String [] level_grid=parameters[level];
 			estimator[] mini_batch_tree= new estimator[level_grid.length];
-			
+			double metric_averages[]=new double [level_grid.length]; //holds stats for the level			
 			Thread[] thread_array= new Thread[(this.threads>level_grid.length)?level_grid.length: this.threads];
 			estimator [] estimators= new estimator[(this.threads>level_grid.length)?level_grid.length: this.threads];
 			int count_of_live_threads=0;
@@ -1112,18 +1125,22 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 										
 											double rms=rmse(predictions,y_cv);
 											System.out.println(" rmse : " + rms);
+											metric_averages[model_count]+=rms;
 										} else if (this.metric.equals("mae")){
 											
 												double mae=mae(predictions,y_cv);
 												System.out.println(" mae : " + mae);
+												metric_averages[model_count]+=mae;
  										} else if (this.metric.equals("rsquared")){
 											
 											double rsq=rsquared(predictions,y_cv);
-											System.out.println(" rsquared : " + rsq);												
+											System.out.println(" rsquared : " + rsq);	
+											metric_averages[model_count]+=rsq;
 										}
 									} else {
 										double log=logloss (predictions,binner.transform(y_cv) ); // the logloss for the current fold	
 										System.out.println(" logloss : " + log);
+										metric_averages[model_count]+=log;
 										
 									}
 						
@@ -1135,7 +1152,7 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 									column_counter+=1;
 								}
 								
-							
+								model_count+=1;	
 								
 							}							
 							
@@ -1153,7 +1170,7 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 						System.out.println("Done with fold: " + (f+1) + "/" + this.folds);
 						
 					}
-				
+					model_count=0;
 			}
 			if (this.print){
 				
@@ -1161,13 +1178,22 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 					
 					System.out.println("Printing reusable train for level: " + (level+1) + " as : " + this.output_name +  (level+1)+ ".csv" );
 				}
-				trainstacker.ToFile(this.output_name +  (level+1)+ ".csv");
-				
+
+				if (include_target){
+					trainstacker.ToFileTarget(this.output_name +  (level+1)+ ".csv",temp_target);
+				}else {
+					trainstacker.ToFile(this.output_name +  (level+1)+ ".csv");
+				}
 			}
 			}
 
 			
 			if (this.verbose){
+				
+				for (int jj=0; jj< metric_averages.length;jj++ ){
+					System.out.println(" Average of all folds model " +jj + " : "  + metric_averages[jj]/this.folds);
+				}
+				
 				System.out.println(" Level: " +  (level+1)+ " start output modelling ");
 			}
 			if (level==0){
@@ -2096,7 +2122,16 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 		fsmatrix trainstacker=null;
 		tree_body= new estimator[parameters.length][];
 		column_counts = new int[parameters.length];
-		int kfolder [][][]=kfold.getindices(this.target.length, this.folds);
+		int kfolder [][][]=null;
+		if (!this.input_index.equals("")){
+			kfolder=readcsv.get_kfolder(this.input_index);
+			this.folds=kfolder.length;
+		}else {
+			kfolder=kfold.getindices(this.target.length, this.folds);
+		}
+		if ( (kfolder[0][0].length+ kfolder[0][1].length)!=this.target.length){
+			throw new IllegalStateException("The kfold indices do not have the proper size" );
+		}
 		for(int level=0; level<parameters.length; level++){
 			
 			// change the data 
@@ -2134,10 +2169,10 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 				
 				
 			}
-			
+			int model_count=0;
 			String [] level_grid=parameters[level];
 			estimator[] mini_batch_tree= new estimator[level_grid.length];
-			
+			double metric_averages[]=new double [level_grid.length]; //holds stats for the level			
 			Thread[] thread_array= new Thread[(this.threads>level_grid.length)?level_grid.length: this.threads];
 			estimator [] estimators= new estimator[(this.threads>level_grid.length)?level_grid.length: this.threads];
 			int count_of_live_threads=0;
@@ -2245,18 +2280,22 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 										
 											double rms=rmse(predictions,y_cv);
 											System.out.println(" rmse : " + rms);
+											metric_averages[model_count]+=rms;
 										} else if (this.metric.equals("mae")){
 											
 												double mae=mae(predictions,y_cv);
 												System.out.println(" mae : " + mae);
+												metric_averages[model_count]+=mae;
  										} else if (this.metric.equals("rsquared")){
 											
 											double rsq=rsquared(predictions,y_cv);
 											System.out.println(" rsquared : " + rsq);
+											metric_averages[model_count]+=rsq;
 										}
 									} else {
 										double log=logloss (predictions,binner.transform(y_cv) ); // the logloss for the current fold	
 										System.out.println(" logloss : " + log);
+										metric_averages[model_count]+=log;
 										
 									}
 						
@@ -2280,14 +2319,14 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 							estimators= new estimator[(this.threads>level_grid.length)?level_grid.length: this.threads];
 						}
 						
-						
+						model_count+=1;		
 		
 					}
 					if (this.verbose==true){
 						System.out.println("Done with fold: " + (f+1) + "/" + this.folds);
 						
 					}
-				
+					model_count=0;
 			}
 			
 			if (this.print){
@@ -2304,6 +2343,12 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 			// we print file
 
 			if (this.verbose){
+				
+				for (int jj=0; jj< metric_averages.length;jj++ ){
+					System.out.println(" Average of all folds model " +jj + " : "  + metric_averages[jj]/this.folds);
+				}
+				
+				
 				System.out.println(" Level: " +  (level+1)+ " start output modelling ");
 			}
 			
@@ -2491,7 +2536,16 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 		fsmatrix trainstacker=null;
 		tree_body= new estimator[parameters.length][];
 		column_counts = new int[parameters.length];
-		int kfolder [][][]=kfold.getindices(this.target.length, this.folds);
+		int kfolder [][][]=null;
+		if (!this.input_index.equals("")){
+			kfolder=readcsv.get_kfolder(this.input_index);
+			this.folds=kfolder.length;
+		}else {
+			kfolder=kfold.getindices(this.target.length, this.folds);
+		}
+		if ( (kfolder[0][0].length+ kfolder[0][1].length)!=this.target.length){
+			throw new IllegalStateException("The kfold indices do not have the proper size" );
+		}
 		for(int level=0; level<parameters.length; level++){
 			
 			// change the data 
@@ -2529,10 +2583,10 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 				
 				
 			}
-			
+			int model_count=0;
 			String [] level_grid=parameters[level];
 			estimator[] mini_batch_tree= new estimator[level_grid.length];
-			
+			double metric_averages[]=new double [level_grid.length]; //holds stats for the level			
 			Thread[] thread_array= new Thread[(this.threads>level_grid.length)?level_grid.length: this.threads];
 			estimator [] estimators= new estimator[(this.threads>level_grid.length)?level_grid.length: this.threads];
 			int count_of_live_threads=0;
@@ -2643,19 +2697,23 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 										
 											double rms=rmse(predictions,y_cv);
 											System.out.println(" rmse : " + rms);
+											metric_averages[model_count]+=rms;
 										} else if (this.metric.equals("mae")){
 											
 												double mae=mae(predictions,y_cv);
 												System.out.println(" mae : " + mae);
+												metric_averages[model_count]+=mae;
 												
  										} else if (this.metric.equals("rsquared")){
 											
 											double rsq=rsquared(predictions,y_cv);
-											System.out.println(" rsquared : " + rsq);		
+											System.out.println(" rsquared : " + rsq);	
+											metric_averages[model_count]+=rsq;
 										}
 									} else {
 										double log=logloss (predictions,binner.transform(y_cv) ); // the logloss for the current fold	
 										System.out.println(" logloss : " + log);
+										metric_averages[model_count]+=log;
 										
 									}
 						
@@ -2669,8 +2727,7 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 									column_counter+=1;
 								}
 								
-							
-								
+								model_count+=1;		
 							}							
 							
 							System.gc();
@@ -2679,14 +2736,14 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 							estimators= new estimator[(this.threads>level_grid.length)?level_grid.length: this.threads];
 						}
 						
-						
+
 				
 					}
 					if (this.verbose==true){
 						System.out.println("Done with fold: " + (f+1) + "/" + this.folds);
 						
 					}
-				
+					model_count=0;
 			}
 			if (this.print){
 				
@@ -2694,7 +2751,11 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 					
 					System.out.println("Printing reusable train for level: " + (level+1) + " as : " + this.output_name +  (level+1)+ ".csv" );
 				}
-				trainstacker.ToFile(this.output_name +  (level+1)+ ".csv");
+				if (include_target){
+					trainstacker.ToFileTarget(this.output_name +  (level+1)+ ".csv",this.target);
+				}else {
+					trainstacker.ToFile(this.output_name +  (level+1)+ ".csv");
+				}
 				
 			}
 
@@ -2702,6 +2763,11 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 
 			
 			if (this.verbose){
+				
+				for (int jj=0; jj< metric_averages.length;jj++ ){
+					System.out.println(" Average of all folds model " +jj + " : "  + metric_averages[jj]/this.folds);
+				}
+				
 				System.out.println(" Level: " +  (level+1)+ " start output modelling ");
 			}
 			
@@ -2890,7 +2956,16 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 		fsmatrix trainstacker=null;
 		tree_body= new estimator[parameters.length][];
 		column_counts = new int[parameters.length];
-		int kfolder [][][]=kfold.getindices(this.target.length, this.folds);
+		int kfolder [][][]=null;
+		if (!this.input_index.equals("")){
+			kfolder=readcsv.get_kfolder(this.input_index);
+			this.folds=kfolder.length;
+		}else {
+			kfolder=kfold.getindices(this.target.length, this.folds);
+		}
+		if ( (kfolder[0][0].length+ kfolder[0][1].length)!=this.target.length){
+			throw new IllegalStateException("The kfold indices do not have the proper size" );
+		}
 		for(int level=0; level<parameters.length; level++){
 			
 			// change the data 
@@ -2922,10 +2997,10 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 				
 				
 			}
-			
+			int model_count=0;
 			String [] level_grid=parameters[level];
 			estimator[] mini_batch_tree= new estimator[level_grid.length];
-			
+			double metric_averages[]=new double [level_grid.length]; //holds stats for the level			
 			Thread[] thread_array= new Thread[(this.threads>level_grid.length)?level_grid.length: this.threads];
 			estimator [] estimators= new estimator[(this.threads>level_grid.length)?level_grid.length: this.threads];
 			int count_of_live_threads=0;
@@ -3036,19 +3111,22 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 										
 											double rms=rmse(predictions,y_cv);
 											System.out.println(" rmse : " + rms);
+											metric_averages[model_count]+=rms;
 										} else if (this.metric.equals("mae")){
 											
 												double mae=mae(predictions,y_cv);
 												System.out.println(" mae : " + mae);
+												metric_averages[model_count]+=mae;
  										} else if (this.metric.equals("rsquared")){
 											
 											double rsq=rsquared(predictions,y_cv);
 											System.out.println(" rsquared : " + rsq);
+											metric_averages[model_count]+=rsq;
 										}
 									} else {
 										double log=logloss (predictions,binner.transform(y_cv) ); // the logloss for the current fold	
 										System.out.println(" logloss : " + log);
-										
+										metric_averages[model_count]+=log;
 									}
 						
 							}
@@ -3060,7 +3138,7 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 								}
 								
 							
-								
+								model_count+=1;	
 							}							
 							
 							System.gc();
@@ -3072,7 +3150,7 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 						
 
 					}
-					
+					model_count=0;
 					if (this.verbose==true){
 						System.out.println("Done with fold: " + (f+1) + "/" + this.folds);
 						
@@ -3085,13 +3163,22 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 					
 					System.out.println("Printing reusable train for level: " + (level+1) + " as : " + this.output_name +  (level+1)+ ".csv" );
 				}
-				trainstacker.ToFile(this.output_name +  (level+1)+ ".csv");
+				if (include_target){
+					trainstacker.ToFileTarget(this.output_name +  (level+1)+ ".csv",this.target);
+				}else {
+					trainstacker.ToFile(this.output_name +  (level+1)+ ".csv");
+				}
 				
 			}
 			}
 
 			
 			if (this.verbose){
+				
+				for (int jj=0; jj< metric_averages.length;jj++ ){
+					System.out.println(" Average of all folds model " +jj + " : "  + metric_averages[jj]/this.folds);
+				}
+				
 				System.out.println(" Level: " +  (level+1)+ " start output modelling ");
 			}
 			
@@ -3548,7 +3635,38 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 					has_classifier_in_last_layer=true;					
 				}else if (str_estimator.contains("H2ONaiveBayesClassifier")) {
 					has_classifier_in_last_layer=true;					
-				} 
+				}else if (str_estimator.contains("SklearnAdaBoostClassifier")) {
+					has_classifier_in_last_layer=true;
+				}else if (str_estimator.contains("SklearnDecisionTreeClassifier")) {
+					has_classifier_in_last_layer=true;
+				}else if (str_estimator.contains("SklearnExtraTreesClassifier")) {
+					has_classifier_in_last_layer=true;
+				}else if (str_estimator.contains("SklearnknnClassifier")) {
+					has_classifier_in_last_layer=true;
+				}else if (str_estimator.contains("SklearnMLPClassifier")) {
+					has_classifier_in_last_layer=true;
+				}else if (str_estimator.contains("SklearnRandomForestClassifier")) {
+					has_classifier_in_last_layer=true;
+				}else if (str_estimator.contains("SklearnSGDClassifier")) {
+					has_classifier_in_last_layer=true;			
+				}else if (str_estimator.contains("SklearnsvmClassifier")) {
+					has_classifier_in_last_layer=true;
+				}else if (str_estimator.contains("KerasnnClassifier")) {
+					has_classifier_in_last_layer=true;
+				}else if (str_estimator.contains("PythonGenericClassifier")) {
+					has_classifier_in_last_layer=true;
+				}else if (str_estimator.contains("FRGFClassifier")) {
+					has_classifier_in_last_layer=true;
+				
+				}else if (str_estimator.contains("libffmClassifier")) {
+					has_classifier_in_last_layer=true;
+				}else if (str_estimator.contains("VowpaLWabbitClassifier")) {
+					has_classifier_in_last_layer=true;
+				}else if (str_estimator.contains("OriginalLibFMClassifier")) {
+					has_classifier_in_last_layer=true;
+				}					
+					
+					
 				return has_classifier_in_last_layer;
 			}
 			
@@ -3593,6 +3711,32 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 					has_regressor_in_last_layer=true;					
 				}else if (str_estimator.contains("H2ODrfRegressor")) {
 					has_regressor_in_last_layer=true;					
+				}else if (str_estimator.contains("SklearnAdaBoostRegressor")) {
+					has_regressor_in_last_layer=true;
+				}else if (str_estimator.contains("SklearnDecisionTreeRegressor")) {
+					has_regressor_in_last_layer=true;
+				}else if (str_estimator.contains("SklearnExtraTreesRegressor")) {
+					has_regressor_in_last_layer=true;
+				}else if (str_estimator.contains("SklearnknnRegressor")) {
+					has_regressor_in_last_layer=true;
+				}else if (str_estimator.contains("SklearnMLPRegressor")) {
+					has_regressor_in_last_layer=true;
+				}else if (str_estimator.contains("SklearnRandomForestRegressor")) {
+					has_regressor_in_last_layer=true;
+				}else if (str_estimator.contains("SklearnSGDRegressor")) {
+					has_regressor_in_last_layer=true;
+				}else if (str_estimator.contains("SklearnsvmRegressor")) {
+					has_regressor_in_last_layer=true;
+				}else if (str_estimator.contains("PythonGenericRegressor")) {
+					has_regressor_in_last_layer=true;
+				}else if (str_estimator.contains("KerasnnRegressor")) {
+					has_regressor_in_last_layer=true;					
+				}else if (str_estimator.contains("FRGFRegressor")) {
+					has_regressor_in_last_layer=true;					
+				}else if (str_estimator.contains("OriginalLibFMRegressor")) {
+					has_regressor_in_last_layer=true;					
+				}else if (str_estimator.contains("VowpaLWabbitRegressor")) {
+					has_regressor_in_last_layer=true;					
 				}
 				return has_regressor_in_last_layer;
 			}			
@@ -3630,7 +3774,21 @@ public class StackNetRegressor implements estimator,regressor, Serializable {
 							x.contains("H2ODrfRegressor")	||							
 							x.contains("LibFmRegressor")	||
 							x.contains("knnRegressor")	||
-							x.contains("XgboostRegressor")	||							
+							x.contains("XgboostRegressor")	||
+							x.contains("SklearnAdaBoostRegressor")	||
+							x.contains("SklearnDecisionTreeRegressor")	||
+							x.contains("SklearnExtraTreesRegressor")	||
+							x.contains("SklearnknnRegressor")	||								
+							x.contains("SklearnMLPRegressor")	||
+							x.contains("SklearnRandomForestRegressor")	||
+							x.contains("SklearnsvmRegressor")	||		
+							x.contains("SklearnSGDRegressor")	||
+							x.contains("KerasnnRegressor")	||							
+							x.contains("PythonGenericRegressor")	||								
+							x.contains("FRGFRegressor")	||	
+							x.contains("VowpaLWabbitRegressor")	||								
+							x.contains("OriginalLibFMRegressor")	||								
+							
 							x.contains("KernelmodelRegressor")
 							) {
 						no++;

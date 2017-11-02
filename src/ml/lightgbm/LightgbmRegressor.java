@@ -42,7 +42,7 @@ import ml.estimator;
 import ml.regressor;
 
 /**
-*<p>>Wraps another kaggle's favourite  <a href="https://github.com/Microsoft/LightGBM">LightGBM</a>).
+*<p>>Wraps another kaggle's favourite  <a href="https://github.com/Microsoft/LightGBM">LightGBM</a>.
 *This particular instance is allowing only regression results. LightGBM models are being trained via a subprocess based on the operating systems
 *executing the class. <b>It is expected that files will be created and their size will vary based on the volume of the training data.</b></p>
 *
@@ -444,13 +444,13 @@ public class LightgbmRegressor implements estimator,regressor {
 	 */
 	private smatrix sdataset;	
 	/**
-	 * Default constructor for LinearRegression with no data
+	 * Default constructor with no data
 	 */
 	public LightgbmRegressor(){
 	
 	}	
 	/**
-	 * Default constructor for LinearRegression with double data
+	 * Default constructor with double data
 	 */
 	public LightgbmRegressor(double data [][]){
 		
@@ -461,7 +461,7 @@ public class LightgbmRegressor implements estimator,regressor {
 	}
 	
 	/**
-	 * Default constructor for LinearRegression with fsmatrix data
+	 * Default constructor with fsmatrix data
 	 */
 	public LightgbmRegressor(fsmatrix data){
 		
@@ -471,7 +471,7 @@ public class LightgbmRegressor implements estimator,regressor {
 		fsdataset=data;
 	}
 	/**
-	 * Default constructor for LinearRegression with smatrix data
+	 * Default constructor with smatrix data
 	 */
 	public LightgbmRegressor(smatrix data){
 		
@@ -1309,7 +1309,7 @@ public class LightgbmRegressor implements estimator,regressor {
 				label=null;
 				System.gc();
 				
-				create_config_file(this.usedir +  File.separator +  "models"+File.separator + this.model_name.replace(" ", "") + n + ".nconf" ,
+				create_config_file(this.usedir +  File.separator +  "models"+File.separator + this.model_name + n + ".conf" ,
 						"data="+this.usedir +  File.separator +  "models"+File.separator + this.model_name + + n +".train",
 						"output_model=" +this.usedir +  File.separator +  "models"+File.separator + this.model_name +  n +".mod");
 
@@ -1322,7 +1322,7 @@ public class LightgbmRegressor implements estimator,regressor {
 				File f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name +  n +".train" );
 		        // tries to delete a non-existing file
 		        f.delete();
-				f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name.replace(" ", "") + n +".conf" );
+				f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name + n +".conf" );
 		        // tries to delete a non-existing file
 		        f.delete();
 
@@ -1558,7 +1558,7 @@ public class LightgbmRegressor implements estimator,regressor {
 				label=null;
 				System.gc();
 				
-				create_config_file(this.usedir +  File.separator +  "models"+File.separator + this.model_name.replace(" ", "") + "0.conf" ,
+				create_config_file(this.usedir +  File.separator +  "models"+File.separator + this.model_name + "0.conf" ,
 						"data="+this.usedir +  File.separator +  "models"+File.separator + this.model_name + "0.train",
 						"output_model=" +this.usedir +  File.separator +  "models"+File.separator + this.model_name +"0.mod");
 
@@ -1571,7 +1571,7 @@ public class LightgbmRegressor implements estimator,regressor {
 				File f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name + "0.train" );
 		        // tries to delete a non-existing file
 		        f.delete();
-				f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name.replace(" ", "") + "0.conf" );
+				f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name + "0.conf" );
 		        // tries to delete a non-existing file
 		        f.delete();
 			
@@ -1618,7 +1618,7 @@ public class LightgbmRegressor implements estimator,regressor {
 				label=null;
 				System.gc();
 				
-				create_config_file(this.usedir +  File.separator +  "models"+File.separator + this.model_name.replace(" ", "") + n + ".nconf" ,
+				create_config_file(this.usedir +  File.separator +  "models"+File.separator + this.model_name + n + ".conf" ,
 						"data="+this.usedir +  File.separator +  "models"+File.separator + this.model_name + + n +".train",
 						"output_model=" +this.usedir +  File.separator +  "models"+File.separator + this.model_name +  n +".mod");
 
@@ -1631,7 +1631,7 @@ public class LightgbmRegressor implements estimator,regressor {
 				File f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name +  n +".train" );
 		        // tries to delete a non-existing file
 		        f.delete();
-				f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name.replace(" ", "") + n +".conf" );
+				f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name + n +".conf" );
 		        // tries to delete a non-existing file
 		        f.delete();
 
@@ -1877,7 +1877,7 @@ public class LightgbmRegressor implements estimator,regressor {
 				label=null;
 				System.gc();
 				
-				create_config_file(this.usedir +  File.separator +  "models"+File.separator + this.model_name.replace(" ", "") + "0.conf" ,
+				create_config_file(this.usedir +  File.separator +  "models"+File.separator + this.model_name + "0.conf" ,
 						"data="+this.usedir +  File.separator +  "models"+File.separator + this.model_name + "0.train",
 						"output_model=" +this.usedir +  File.separator +  "models"+File.separator + this.model_name +"0.mod");
 
@@ -1890,7 +1890,7 @@ public class LightgbmRegressor implements estimator,regressor {
 				File f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name + "0.train" );
 		        // tries to delete a non-existing file
 		        f.delete();
-				f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name.replace(" ", "") + "0.conf" );
+				f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name + "0.conf" );
 		        // tries to delete a non-existing file
 		        f.delete();
 			
@@ -1937,7 +1937,7 @@ public class LightgbmRegressor implements estimator,regressor {
 				label=null;
 				System.gc();
 				
-				create_config_file(this.usedir +  File.separator +  "models"+File.separator + this.model_name.replace(" ", "") + n + ".nconf" ,
+				create_config_file(this.usedir +  File.separator +  "models"+File.separator + this.model_name + n + ".conf" ,
 						"data="+this.usedir +  File.separator +  "models"+File.separator + this.model_name + + n +".train",
 						"output_model=" +this.usedir +  File.separator +  "models"+File.separator + this.model_name +  n +".mod");
 
@@ -1950,7 +1950,7 @@ public class LightgbmRegressor implements estimator,regressor {
 				File f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name +  n +".train" );
 		        // tries to delete a non-existing file
 		        f.delete();
-				f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name.replace(" ", "") + n +".conf" );
+				f = new File(this.usedir +  File.separator +  "models"+File.separator + this.model_name + n +".conf" );
 		        // tries to delete a non-existing file
 		        f.delete();
 
@@ -2194,7 +2194,7 @@ public class LightgbmRegressor implements estimator,regressor {
 				else if (metric.equals("lambda_l2")) {this.lambda_l2=Double.parseDouble(value);}				
 				else if (metric.equals("feature_fraction")) {this.feature_fraction=Double.parseDouble(value);}
 				else if (metric.equals("bagging_fraction")) {this.bagging_fraction=Double.parseDouble(value);}	
-				else if (metric.equals("num_rnum_iterationsound")) {this.num_iterations=Integer.parseInt(value);}
+				else if (metric.equals("num_iterations")) {this.num_iterations=Integer.parseInt(value);}
 				else if (metric.equals("scale_pos_weight")) {this.scale_pos_weight=Double.parseDouble(value);}	
 				else if (metric.equals("learning_rate")) {this.learning_rate=Double.parseDouble(value);}
 				else if (metric.equals("huber_delta")) {this.huber_delta=Double.parseDouble(value);}	
@@ -2211,6 +2211,9 @@ public class LightgbmRegressor implements estimator,regressor {
 				else if (metric.equals("skip_drop")) {this.skip_drop=Double.parseDouble(value);}				
 				else if (metric.equals("top_rate")) {this.top_rate=Double.parseDouble(value);}				
 				else if (metric.equals("other_rate")) {this.other_rate=Double.parseDouble(value);}	
+				else if (metric.equals("objective")) {this.Objective=value;}				
+				
+				
 				else if (metric.equals("categorical_feature")) {this.categorical_feature=value;}	
 				else if (metric.equals("uniform_drop")) {this.uniform_drop=(value.toLowerCase().equals("true")?true:false)   ;}
 				else if (metric.equals("xgboost_dart_mode")) {this.xgboost_dart_mode=(value.toLowerCase().equals("true")?true:false)   ;}
